@@ -1,0 +1,27 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+tf.tensor(10).print();
+tf.tensor([1,2,3,4]).print();
+tf.tensor([1,2,3,4,5,6],[2,3]).print();//[[1,2,3],[4,5,6]]
+tf.tensor([1,2,3,4,5,6],[3,2]).print();//[[1,2],[3,4],[5,6]]
+tf.tensor([1,2,3,4,5,6],[3,2,1]).print();
+
+tf.tensor(10).print(true);//dtype,rank,shape,values 출력
+
+const one = tf.tensor(123);
+tf.print(one);
+
+const typed32 = new Int32Array(2);
+tf.tensor(typed32).print();
+typed32[0]=123;
+tf.tensor(typed32).print();
+
+const buffer = new ArrayBuffer(12);//12바이트 버퍼를 가진 ArrayBuffer인스턴스를 생성.
+//ArrayBuffer 인스턴스에 Array-Like 형태로 12바이트의 버퍼를 설정합니다.
+const buffer32 = new Float32Array(buffer);//4바이트(32비트)단위로 실수 값을 View할 수 있는 Float32Array인스턴스 생성.
+//ArrayBuffer가 12바이트. 엘리먼트 3개.
+//ArrayBuffer인스턴스와 Float32Array인스턴스 연동.
+tf.tensor(buffer32).print();
+buffer32[0]=4.5, buffer32[2]=9.1;
+tf.tensor(buffer32).print();
+</script>
