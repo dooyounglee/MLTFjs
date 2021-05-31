@@ -1,0 +1,63 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+{
+const tsOne = tf.tensor1d([10,13,16]);
+const tsTwo = tf.tensor1d([1,3,5]);
+
+tsOne.add(tsTwo);
+tsOne.add(tsTwo).print();
+tf.add(tsOne,tsTwo).print();
+tsOne.sub(tsTwo).print();
+}
+{
+const tsOne = tf.scalar(7);
+const tsTwo = tf.tensor1d([1,3,5]);
+tsOne.add(tsTwo).print();
+}
+{
+const tsOne = tf.tensor1d([1,2,3]);
+const tsTwo = tf.tensor1d([4,5,6]);
+tsOne.dot(tsTwo).print();
+}
+{
+const tsOne = tf.tensor1d([1,2,3]);
+const tsTwo = tf.tensor1d([4,5,6]);
+//tsOne.outerProduct(tsTwo).print();//이런거 없네
+tf.outerProduct(tsOne,tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([1,2,3,4],[2,2]);
+const tsTwo = tf.tensor2d([5,6,7,8],[2,2]);
+tsOne.add(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([1,2,3,4,5,6,7,8,9],[3,3]);
+const tsTwo = tf.tensor2d([9,8,7,1,2,3,4,5,6],[3,3]);
+tsOne.add(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([[3,4],[5,6],[7,8]]);
+const tsTwo = tf.tensor1d([1,2]);
+tsOne.add(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([[1,2],[3,4]]);
+const tsTwo = tf.tensor2d([[5],[6]]);
+tsOne.matMul(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([[1,2],[3,4]]);
+const tsTwo = tf.tensor2d([[5],[6]]);
+tsOne.mul(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([[1,2],[3,4]]);
+const tsTwo = tf.tensor2d([[5,6],[7,8]]);
+tsOne.matMul(tsTwo).print();
+}
+{
+const tsOne = tf.tensor2d([[1,2,3],[4,5,6]]);
+const tsTwo = tf.tensor2d([[1,2],[3,4],[5,6]]);
+tsOne.matMul(tsTwo).print();
+}
+</script>
