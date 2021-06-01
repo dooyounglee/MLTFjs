@@ -1,0 +1,49 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+{
+const tsOne = tf.tensor1d([1,2,3]);
+const tsTwo = tf.tensor1d([4,5,6]);
+tsOne.add(tsTwo);
+tf.add(tsOne,tsTwo);
+
+tf.sub(tsOne,tsTwo);//빼기
+tf.mul(tsOne,tsTwo);
+tf.div(tsOne,tsTwo);
+tf.floorDiv(tsOne,tsTwo);
+tf.mod(tsOne,tsTwo);
+tf.maximum(tsOne,tsTwo);
+tf.minimum(tsOne,tsTwo);
+tf.pow(tsOne,tsTwo);
+tf.squaredDifference(tsOne,tsTwo);
+}
+{
+const tsOne = tf.tensor1d([1,2]);
+const tsTwo = tf.tensor1d([3,4]);
+tf.addN([tsOne,tsTwo,[5,6]]);
+}
+{
+const tsOne = tf.tensor1d([1,2,3,4]);
+tf.cumsum(tsOne);
+}
+{
+const tsTwo = tf.tensor2d([1,2,3,4,5,6],[2,3]);
+tf.cumsum(tsTwo).print();//세로로 누적
+tf.cumsum(tsTwo,1).print();//가로로 누적
+}
+{
+const tsOne = tf.tensor1d([1,2,3,4]);
+tf.cumsum(tsOne,0,true).print();//직전까지 누적한 값을 반환
+tf.cumsum(tsOne,0,false,true).print();//모두 더해서 빼고 빼고 빼고
+}
+{
+const tsCond = tf.tensor1d([false,true,false],'bool');
+const tsOne = tf.tensor1d([1,2,3]);
+const tsTwo = tf.tensor1d([4,5,6]);
+tsOne.where(tsCond,tsTwo).print();
+tf.where(tsCond,tsOne,tsTwo);
+}
+{
+const tsCond = tf.tensor1d([true,false,true],'bool');
+tf.whereAsync(tsCond).then(result=>result.print());//true인 인덱스
+}
+</script>
