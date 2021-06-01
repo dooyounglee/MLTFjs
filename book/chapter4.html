@@ -35,6 +35,19 @@ const tsOne = tf.tensor1d([1,2,3,4]);
 tf.cumsum(tsOne,0,true).print();//직전까지 누적한 값을 반환
 tf.cumsum(tsOne,0,false,true).print();//모두 더해서 빼고 빼고 빼고
 }
+/*
+tf.equal()
+tf.notEqual()
+tf.greater()
+tf.greaterEqual()
+tf.less()
+tf.lessEqual()
+tf.logicalAnd()
+tf.logicalNot()
+tf.logicalXor()
+tf.where()
+tf.whereAsync()
+*/
 {
 const tsCond = tf.tensor1d([false,true,false],'bool');
 const tsOne = tf.tensor1d([1,2,3]);
@@ -43,7 +56,62 @@ tsOne.where(tsCond,tsTwo).print();
 tf.where(tsCond,tsOne,tsTwo);
 }
 {
+//Promise여서 console순서가 꼬이나봄?
 const tsCond = tf.tensor1d([true,false,true],'bool');
 tf.whereAsync(tsCond).then(result=>result.print());//true인 인덱스
+}
+
+/*
+tf.linspace(start,stop,num)
+*/
+{
+const tsOne = tf.linspace(0,10,5);
+tsOne.print();//[0, 2.5, 5, 7.5, 10]
+tf.range(0,8,2).print();//start는 포함. stop은 포함안함
+tf.range(0,8).print();//default=1 or -1
+tf.range(7,0,-2).print();
+tf.range(0,10,2).sum();
+}
+{
+tf.zeros([2,3]).print();
+//tf.zerosLike(?????).print();
+tf.ones([2,3]).print();
+//tf.onesLike(?????).print();
+tf.fill([2,3],4).print();
+//tf.clone(???).print();
+}
+/*
+tf.abs()
+tf.ceil()
+tf.floor()
+tf.round()
+tf.clipByValue()
+tf.log() 밑:e
+tf.log1p() log(1+x)
+tf.exp()
+tf.expmp1() e^x -1
+tf.neq() -1*x
+tf.reciprocal() 1/x
+tf.sqrt()
+tf.square()
+tf.rsqrt() 1/sqrt(x)
+tf.sign() 양수:1 음수:-1 0 NaN:0
+tf.sin()
+tf.asin()
+tf.sinh()
+tf.asinh()
+tf.cos()
+tf.acos()
+tf.cosh()
+tf.acosh()
+tf.tan()
+tf.atan()
+tf.tanh()
+tf.atan2() y/x의 아크 탄젠트 ?????
+tf.atanh()
+*/
+{
+const tsOne = tf.tensor1d([1,2,-3,4]);
+tsOne.clipByValue(-2,3);//tsOne 돌면서 -2~3 넘으면 -2,3 나오도록
 }
 </script>
