@@ -1,0 +1,60 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+/*
+tf.gather()//인덱스 번째 값 추출
+tf.slice()//시작부터 지정한 크기만큼 추출
+tf.concat()//값 연결
+tf.stack()//파라미터에 작성한 순서로 연결
+tf.tile()//복제하여 연결
+tf.reverse()
+tf.unstack()//1차원 낮추어 분할
+tf.split()//지정한 수로 분할
+tf.cast()//값 타입 변환
+tf.expandDims()
+tf.squeeze()
+tf.pad()//앞뒤에 엘리먼트 삽입
+tf.reshape()
+tf.all()//논리 AND 비교
+tf.any()//논리 OR 비교
+tf.max()
+tf.min()
+tf.argMax()//최댓값 인덱스
+tf.argMin()//최소값 인덱스
+tf.mean()
+tf.sum()
+tf.prod()????
+tf.randomUniform()//균등분포 난수
+tf.randomNormal()//정규분포 난수
+tf.truncatedNormal()//절단 정규분포 난수
+tf.variable()//tf.Variable 생성
+tf.Variable.assign()//tf.Variable 값 변경
+*/
+{
+	const tsOne = tf.tensor1d([1,3,5,7]);
+	const tsTwo = tf.tensor1d([1,2,3],'int32');
+	tf.gather(tsOne,tsTwo);//tsOne에서 tsTwo에 값 tsOne[tsTwo]
+	
+	const tsThree = tf.tensor2d([1,3,5,7,9,11],[3,2]);//[[1,3],[5,7],[9,11]]
+	const tsFour = tf.tensor1d([0,2,1],'int32');
+	tf.gather(tsThree,tsFour);//tsOne에서 tsTwo에 값 tsThree[tsFour]
+}
+{
+	const tsOne = tf.tensor1d([1,3,5,7,9]);
+	tf.slice(tsOne,0,3).print();//0부터 3개
+	tf.print([tsOne]);
+	
+	const tsTwo = tf.tensor2d([1,3,5,7,9,11],[3,2]);//[[1,3],[5,7],[9,11]]
+	tf.slice(tsTwo,[1,0],[2,1]);//??????????
+}
+{
+	const tsOne = tf.tensor2d([[1,2],[10,20]]);
+	const tsTwo = tf.tensor2d([[3,4],[30,40]]);
+	tf.concat([tsOne,tsTwo]).print();
+	tf.concat([tsOne,tsTwo],1).print();//axis????????????
+}
+{
+	const tsOne = tf.tensor3d([[[1,3],[5,7]],[[11,13],[15,17]]]);
+	const tsTwo = tf.tensor3d([[[2,4],[6,8]],[[12,14],[16,18]]]);
+	tf.concat([tsOne,tsTwo],2).print();
+}
+</script>
