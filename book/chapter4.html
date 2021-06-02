@@ -73,12 +73,13 @@ tf.range(7,0,-2).print();
 tf.range(0,10,2).sum();
 }
 {
+const tsOne = tf.linspace(0,10,5);
 tf.zeros([2,3]).print();
-//tf.zerosLike(?????).print();
+tf.zerosLike(tsOne).print();
 tf.ones([2,3]).print();
-//tf.onesLike(?????).print();
+tf.onesLike(tsOne).print();
 tf.fill([2,3],4).print();
-//tf.clone(???).print();
+tf.clone(tsOne).print();
 }
 /*
 tf.abs()
@@ -107,7 +108,7 @@ tf.acosh()
 tf.tan()
 tf.atan()
 tf.tanh()
-tf.atan2() y/x의 아크 탄젠트 ?????
+tf.atan2(x,y)=tf.atan(x/y)
 tf.atanh()
 */
 {
