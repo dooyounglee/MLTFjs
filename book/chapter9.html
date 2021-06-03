@@ -1,0 +1,45 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+//학습데이터
+const dataX=[1,2,3,4,5], dataY=[10,20,30,40,50];
+const trainDataX=tf.tensor1d(dataX), trainDataY=tf.tensor1d(dataY);
+
+//W,b에 초기값 랜덤변수
+const varWeight=tf.variable(tf.randomNormal([1],0,1,'float32',700),true,'weight');
+const varBias=tf.variable(tf.randomNormal([1],0,1,'float32',710),true,'Bias');
+
+function predict(){
+	return varWeight.mul(trainDataX).add(varBias);//y=W*x+b
+}
+
+function loss(prediction){
+	return prediction.sub(trainDataY).square().mean();//E(|\hat{y}-y|^2)
+}
+
+//반복횟수
+const loop=1000;
+
+const learningRate=0.01;
+const optimizer=tf.train.sgd(learningRate);
+const trainResult=[];
+
+function train(){
+	const middle=loop/2;
+	for(let k=0;k<loop;k++){
+		optimizer.minimize(()=>{//optimizer.minimize()를 return cost해두면, cost에 따라 varWeight,varBias에 새로운 값을 넣어주나봐 저절로. 저 함수를 모르니까...
+			const pred=predict();
+			const cost=loss(pred);
+			if(k<3||k>(loop-4)||(k>(middle-3) && k< (middle+3))){
+				//trainResult.push([k,cost,varWeight,varBias]);
+				console.log(k);
+				cost.print();
+				varWeight.print();
+				varBias.print();
+			};
+			return cost;
+		});
+	}
+	console.log(trainResult);
+}
+train();
+</script>
