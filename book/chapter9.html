@@ -30,11 +30,7 @@ function train(){
 			const pred=predict();
 			const cost=loss(pred);
 			if(k<3||k>(loop-4)||(k>(middle-3) && k< (middle+3))){
-				//trainResult.push([k,cost,varWeight,varBias]);
-				console.log(k);
-				cost.print();
-				varWeight.print();
-				varBias.print();
+				trainResult.push([k,cost.dataSync()[0],varWeight.dataSync()[0],varBias.dataSync()[0]]);
 			};
 			return cost;
 		});
