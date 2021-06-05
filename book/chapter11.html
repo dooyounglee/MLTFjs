@@ -1,0 +1,82 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+{
+const trainDataX = tf.randomNormal([100],1,0.1,'float32',720);
+const trainDataY = tf.linspace(10,10,100);
+const varWeight = tf.variable(tf.randomNormal([1],0,1,'float32',700));
+const varBias = tf.variable(tf.randomNormal([1],0,1,'float32',710));
+
+function predict(dataX){
+	return varWeight.mul(dataX).add(varBias);
+}
+
+function loss(predict,dataY){
+	return predict.sub(dataY).square().mean();
+}
+
+const loop = 100, trainResult = [], learningRate = 0.01;
+const optimizer = tf.train.sgd(learningRate);
+
+function batchTrain(){
+	for(let k=0;k<loop;k++){
+		optimizer.minimize(()=>{
+			const pred = predict(trainDataX);
+			let res=loss(pred,trainDataY);
+			console.log(k,res.dataSync()[0]);
+			return res
+		});
+	}
+}
+
+function randomOne(min,max){
+	return Math.trunc((max-min)*Math.random())+min;
+}
+
+function sgdTrain(){
+	varWeight.assign(tf.variable(tf.randomNormal([1],0,1,'float32',700)));
+	varBias.assign(tf.variable(tf.randomNormal([1],0,1,'float32',710)));
+	for(let k=0;k<loop;k++){
+		optimizer.minimize(()=>{
+			const value = randomOne(0,100);
+			const index=new Int32Array([value]);
+			const pred=predict(trainDataX.gather(index));
+			let res=loss(pred,trainDataY.gather(index));
+			console.log(k,res.dataSync()[0]);
+			return res
+		});
+	}
+}
+
+batchTrain();
+sgdTrain();
+}
+{
+const batchSize=10,learningRate=0.01;
+const optimizer=tf.train.sgd(learningRate);
+
+function randomIndices(min,max,many){
+	const values=[];
+	let count=0;
+	while(count<many){
+		const one=randomOne(min,max);
+		values.push(one);
+		count++;
+	}
+	return values;
+}
+
+function miniBatchTrain(){
+	varWeight.assign(tf.variable(tf.randomNormal([1],0,1,'float32',700)));
+	varBias.assign(tf.variable(tf.randomNormal([1],0,1,'float32',710)));
+	for(let k=0;k<trainDataX.size;k++){
+		optimizer.minimize(()=>{
+			const index=randomIndices(0,100,batchSize);
+			const pred=predict(trainDataX.gather(index));
+			let res=loss(pred,trainDataY.gather(index));
+			console.log(k,res.dataSync()[0]);
+			return res;
+		});
+	}
+}
+}
+</script>
