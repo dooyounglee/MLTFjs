@@ -1,0 +1,82 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script src="iris_data_js.js"></script>
+<script>
+function getData(data, index, species){
+  const result = [];
+  let fields;
+
+  const loop = function(field){
+    if (Array.isArray(index)){
+      const list = [];
+      for (let m = 0; m < index.length; m++){
+        list.push(fields[index[m]]);
+      };
+      result.push(list);
+    } else {
+      result.push(fields[index]);
+    }
+  };
+
+  for (let k = 0; k < data.length; k++){
+    fields = data[k];
+    if (species){
+      if (('Iris-' + species) === fields[4]){
+        loop(fields);
+      };
+    } else {
+      loop(fields);
+    };
+  };
+  return result;
+}
+
+function randomIndices(min,max,many){
+	const values=[];
+	let count=0;
+	while(count<many){
+		const one=randomOne(min,max);
+		values.push(one);
+		count++;
+	}
+	return values;
+}
+
+function randomOne(min,max){
+		return Math.trunc((max-min)*Math.random())+min;
+	}
+
+{
+	const dataX=getData(irisData,3);
+	const dataY=getData(irisData,0);
+	const trainDataX = tf.tensor1d(dataX);
+	const trainDataY = tf.tensor1d(dataY);
+	
+	const varWeight = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 700));
+	const varBias = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 710));
+	
+	function predict(dataX){
+		return varWeight.mul(dataX).add(varBias);
+	}
+	
+	function loss(predict,dataY){
+		return predict.sub(dataY).square().mean();
+	}
+	
+	const loop=500, batchSize=15;
+	const learningRate=0.01, momentum=0.9;
+	const optimizer=tf.train.momentum(learningRate,momentum);
+	
+	function train(){
+		for(let k=0;k<loop;k++){
+			optimizer.minimize(()=>{
+				const index=randomIndices(0,trainDataX.size,batchSize);
+				const pred=predict(trainDataX.gather(index));
+				let res=loss(pred,trainDataY.gather(index));
+				console.log([k, res.dataSync()[0], varWeight.dataSync()[0], varBias.dataSync()[0]]);
+				return res;
+			});
+		}
+	}
+	train();
+}
+</script>
