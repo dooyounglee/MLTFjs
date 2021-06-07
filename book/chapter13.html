@@ -1,0 +1,79 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script src="housing_test.js"></script>
+<script src="housing_train.js"></script>
+<script src="web.js"></script>
+<script>
+function getData(data, rows = 0, ...fields){
+  const result = [];
+  const names = fields || fieldNames;
+  for (let k = 0; k < data.length; k++){
+    if (rows && k == rows){
+      break;
+    };
+    const lineData = data[k];
+    for (let name of names){
+      const value = lineData[name];
+      result[k] ? result[k].push(value) : result.push([value]);
+    };
+  };
+  return result;
+};
+
+function randomIndices(min,max,many){
+	const values=[];
+	let count=0;
+	while(count<many){
+		const one=randomOne(min,max);
+		values.push(one);
+		count++;
+	}
+	return values;
+}
+
+function randomOne(min,max){
+	return Math.trunc((max-min)*Math.random())+min;
+}
+
+{
+	const dataX=getData(housingTrain,0,'rm','dis','ptratio');
+	const dataY=getData(housingTrain,0,'medv');
+	
+	const trainDataX=tf.tensor2d(dataX), trainDataY=tf.tensor2d(dataY);
+	
+	//const varWeight1=tf.variable(tf.scalar(Math.random()));
+	//const varWeight2=tf.variable(tf.scalar(Math.random()));
+	//const varWeight3=tf.variable(tf.scalar(Math.random()));
+	const varWeight=tf.variable(tf.randomNormal([3,1],0,1,'float32',700));
+	const varBias=tf.variable(tf.randomNormal([1],0,1,'float32',710));
+	
+	function predict(dataX){
+		return tf.matMul(dataX,varWeight).add(varBias);
+	}
+	
+	function loss(predict,dataY){
+		return predict.sub(dataY).square().mean();
+	}
+	
+	const learningRate = 0.05;
+	const beta1 = 0.9, beta2 = 0.999, epsilon = 0.001;
+	optimizer = tf.train.adam(learningRate, beta1, beta2, epsilon);
+
+	const loop = 500;
+	const trainResult = [];
+	
+	function train(){
+	  for (let k = 0; k < loop; k++){
+		optimizer.minimize(() => {
+		  const pred = predict(trainDataX);
+		  const cost = loss(pred, trainDataY);
+
+		  //const values = web.getTensorScalar(cost, varWeight, varBais);
+		  trainResult.push([k, cost.dataSync()[0], varWeight.dataSync()[0], varBias.dataSync()[0]]);
+		  return cost;
+		});
+	  };
+	  console.log(trainResult);
+	};
+	train();
+}
+</script>
