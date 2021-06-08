@@ -1,0 +1,46 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script src="iris_data_js.js"></script>
+<script src="web.js"></script>
+<script>
+{
+	const dataX=web.iris.getData(irisData,3), dataY=web.iris.getData(irisData,0);
+	const trainDataX=tf.tensor1d(dataX), trainDataY=tf.tensor1d(dataY);
+	
+	const varWeight=tf.variable(tf.randomNormal([1],0,1,'float32',700));
+	const varBias=tf.variable(tf.randomNormal([1],0,1,'float32',710));
+	const dupWeight=tf.clone(varWeight), dupBias=tf.clone(varBias);
+	
+	const loop=400;
+	const learningRate=0.05, beta1=0.9, beta2=0.999, epsilon=0;
+	const optimizer=tf.train.adam(learningRate,beta1,beta2,epsilon);
+	const lambda=0.3;
+	const regularizer=tf.regularizers.l1({l1:lambda});
+	
+	function predict(dataX){
+		return varWeight.mul(dataX).add(varBias);
+	}
+	
+	function loss(predict,dataY){
+		return predict.sub(dataY).square().mean();
+	}
+	
+	let regularValue=0;
+	function regularLoss(predict,dataY){
+		regularValue=regularizer.apply(varWeight);
+		return loss(predict,dataY).add(regularValue);
+	}
+	
+	function train(reg){
+		for(let k=0;k<loop;k++){
+			optimizer.minimize(()=>{
+				const pred=predict(trainDataX);
+				let _loss=reg?regularLoss(pred,trainDataY):loss(pred,trainDataY);
+				console.log(k,_loss.dataSync()[0],varWeight.dataSync()[0],varBias.dataSync()[0],dupWeight.dataSync()[0],dupBias.dataSync()[0]);
+				return _loss;
+			});
+		}
+	}
+	train(false);//선형회귀
+	train(true);//라쏘회귀
+}
+</script>
