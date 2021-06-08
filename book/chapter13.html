@@ -76,4 +76,63 @@ function randomOne(min,max){
 	};
 	train();
 }
+
+{
+	const tsThree = tf.scalar(3, 'int32');//x^3 계산할떄 쓸 3
+	const one = -0.9, two = -0.1, three = 0.9, four = 0.4, count = 100;//정답
+
+	//정답Y 계산하려고 만든 함수
+	function createData(dx){
+		return tf.tidy(()=>{
+			return tf.scalar(one).mul(dx.pow(tf.scalar(3)))
+			.add(tf.scalar(two).mul(dx.square()))
+			.add(tf.scalar(three).mul(dx))
+			.add(tf.scalar(four));
+		});
+	}
+	
+	const trainDataX = tf.randomUniform([count], -1, 1);//count개 랜덤값
+	const trainDataY = createData(trainDataX);//X랜덤값으로 계산한 Y값
+	const dataX = trainDataX.dataSync();//이거 어따씀?
+	const dataY = trainDataY.dataSync();//이거 어따씀?
+	
+	//계수 초기값
+	const varOne = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 701));
+	const varTwo = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 702));
+	const varThree = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 702));
+	const varFour = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 702));
+	
+	function predict(dx){
+		return tf.tidy(() => {
+			return varOne.mul(dx.pow(tsThree))
+			.add(varTwo.mul(dx.square()))
+			.add(varThree.mul(dx))
+			.add(varFour);
+		});
+	};
+	
+	function loss(predict, dy){
+		return predict.sub(dy).square().mean();
+	};
+
+	let loop = 500;
+	const learningRate = 0.01, beta1 = 0.9, beta2 = 0.999, epsilon = 0;
+	const optimizer = tf.train.adam(learningRate, beta1, beta2, epsilon);
+	const trainResult = [];
+	
+	function train(){
+		for (let k = 0; k < loop; k++){
+			optimizer.minimize(() => {
+				const pred = predict(trainDataX);
+				const cost = loss(pred, trainDataY);
+
+				//const vl = web.getTensorScalar(cost, varOne, varTwo, varThree, varFour);
+				trainResult.push([k, cost.dataSync()[0], varOne.dataSync()[0], varTwo.dataSync()[0], varThree.dataSync()[0], varFour.dataSync()[0]]);
+				return cost;
+			});
+		};
+		console.log(trainResult);
+	};
+	train();
+}
 </script>
