@@ -1,0 +1,108 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script src="iris_data_js.js"></script>
+<script src="web.js"></script>
+<script>
+
+{
+	const dataX=[5.0,5.5,6.0,6.1,7.0], dataY=[0,0,0,1,1];
+	const trainDataX=tf.tensor1d(dataX), trainDataY=tf.tensor1d(dataY);
+
+	const varWeight = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 700), true, 'weight');
+	const varBias = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 710), true, 'bias');
+
+	/*
+
+	loss()를 풀어서 작성한 것임
+	function loss(){
+	  return tf.tidy(() => {
+	    const logits = trainDataX.mul(varWeight).add(varBias);
+	    const temp1 = trainDataY.mul(tf.log(logits));
+	    const temp2 = tf.sub(tf.scalar(1), trainDataY).mul(tf.log(tf.scalar(1).sub(logits)));
+	    return temp1.add(temp2).mean().neg();
+	  });
+	};
+	*/
+
+	function loss(){
+		const logits=trainDataX.mul(varWeight).add(varBias);//Wx+b
+		return tf.losses.sigmoidCrossEntropy(trainDataY,logits);//H(x)=S(Wx+b)
+	}
+
+	const learningRate = 0.2, beta1 = 0.9, beta2 = 0.999, epsilon = 0;
+	const optimizer = tf.train.adam(learningRate, beta1, beta2, epsilon);
+
+	const loop=2000;
+	const trainResult = [];
+
+	function train(){
+		for(let k=0;k<loop;k++){
+			optimizer.minimize(()=>{
+				let cost=loss();
+				trainResult.push([k, cost.dataSync()[0],varWeight.dataSync()[0],varBias.dataSync()[0]]);
+				return cost;
+			});
+		}
+		console.log(trainResult);
+	}
+	train();
+
+	const zeroBetweenOne=trainDataX.mul(varWeight).add(varBias).sigmoid();
+	const predictResult=zeroBetweenOne.round().toFloat();
+	const accuracy=predictResult.equal(dataY).mean();
+	console.log(zeroBetweenOne.dataSync());
+	console.log(predictResult.dataSync());
+	console.log(accuracy.dataSync());
+}
+
+{
+	const dataX = web.iris.getData(irisData, 3);
+	const irisNames = web.iris.getData(irisData, 4);
+	const dataY = irisNames.map(function(name, index){return name === 'Iris-virginica' ? 1 : 0;}, this);
+	const trainDataX=tf.tensor1d(dataX), trainDataY=tf.tensor1d(dataY);
+
+	const varWeight = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 700), true, 'weight_');
+	const varBias = tf.variable(tf.randomNormal([1], 0, 1, 'float32', 710), true, 'bias_');
+
+	/*
+	loss()를 풀어서 작성한 것임
+	function loss(){
+	  return tf.tidy(() => {
+	    const logits = trainDataX.mul(varWeight).add(varBias);
+	    const temp1 = trainDataY.mul(tf.log(logits));
+	    const temp2 = tf.sub(tf.scalar(1), trainDataY).mul(tf.log(tf.scalar(1).sub(logits)));
+	    return temp1.add(temp2).mean().neg();
+	  });
+	};
+	*/
+
+	function loss(){
+		const logits=trainDataX.mul(varWeight).add(varBias);//Wx+b
+		return tf.losses.sigmoidCrossEntropy(trainDataY,logits);//H(x)=S(Wx+b)
+	}
+
+	const learningRate = 0.2, beta1 = 0.9, beta2 = 0.999, epsilon = 0;
+	const optimizer = tf.train.adam(learningRate, beta1, beta2, epsilon);
+
+	const loop=2000;
+	const trainResult = [];
+
+	function train(){
+		for(let k=0;k<loop;k++){
+			optimizer.minimize(()=>{
+				let cost=loss();
+				trainResult.push([k, cost.dataSync()[0],varWeight.dataSync()[0],varBias.dataSync()[0]]);
+				return cost;
+			});
+		}
+		console.log(trainResult);
+	}
+	train();
+	
+	const zeroBetweenOne=trainDataX.mul(varWeight).add(varBias).sigmoid();
+	const predictResult=zeroBetweenOne.round().toFloat();
+	const accuracy=predictResult.equal(dataY).mean();
+	console.log(zeroBetweenOne.dataSync());
+	console.log(predictResult.dataSync());
+	console.log(accuracy.dataSync());
+}
+</script>
