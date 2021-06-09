@@ -14,7 +14,9 @@
 	const learningRate=0.05, beta1=0.9, beta2=0.999, epsilon=0;
 	const optimizer=tf.train.adam(learningRate,beta1,beta2,epsilon);
 	const lambda=0.3;
-	const regularizer=tf.regularizers.l1({l1:lambda});
+	//const regularizer=tf.regularizers.l1({l1:lambda});//Lasso
+	//const regularizer=tf.regularizers.l2({l2:lambda});//Ridge
+	const regularizer=tf.regularizers.l1l2({l1:lambda,l2:lambda});//Elastic Net
 	
 	function predict(dataX){
 		return varWeight.mul(dataX).add(varBias);
@@ -41,6 +43,6 @@
 		}
 	}
 	train(false);//선형회귀
-	train(true);//라쏘회귀
+	train(true);//Lasso,Ridge,Elastic Net 회귀
 }
 </script>
