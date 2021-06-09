@@ -1,0 +1,36 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script>
+{
+	//hardSigmoid h(x)=max(min(0.2x+0.5,1),0)
+	const dataX=tf.linspace(-5,5,100);
+	const twoFive=tf.add(tf.mul(tf.scalar(0.2),dataX),tf.scalar(0.5));
+	const dataY=tf.clipByValue(twoFive,0,1); //0보다 작으면 0, 1보다 크면 1, 그 사이는 그대로
+
+	//step h(x)={0,x<0//1,x>=0
+	//const dataY=tf.step(dataX,0)=tf.step(dataX);//0기준은 함수특이고 0보다 작을때값은 0으로 지정
+
+	//ReLU h(x)=max(x,0)
+	//const dataY=tf.relu(dataX);
+
+	//LeakyReLU h(a,x)=max(ax,x);
+	//const dataY=tf.leakyRelu(dataX,0.2)=tf.leakyRelu(dataX); //x가 0보다 작을때, 계속 학습하는것이 목적이라면 더 작은 값 사용
+	//ReLU6 h(x)=min(max(x,0),6)
+	//const dataRelu=tf.relu(dataX);
+	//const dataY=tf.minimum(dataRelu,tf.scalar(6.0));
+
+	//softPlus h(x)=log(1+e^x)
+	//const dataY=tf.softplus(dataX);
+
+	//tanh h(x)=sinh(x)/cosh(x)=e^x-e-x/e^x+e^-x=e^2x-1/e^2x+1
+	//const dataY=tf.tanh(dataX);
+
+	//softsign h(x)=x/(1+x)
+	//const dataY=dataX.div(tf.add(tf.scalar(0.1), tf.abs(dataX)));
+
+	//ELU h(x)={ae^x-1, x<=0//x, x>=0
+	//const dataY=tf.elu(dataX);
+
+	//SELU selu(x)={a(e^x-1),sx<=0//x, x>0,where a,s:상수
+	//const dataY=tf.selu(dataX);
+}
+</script>
