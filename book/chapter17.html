@@ -1,0 +1,76 @@
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+<script src="iris_data_js.js"></script>
+<script src="web.js"></script>
+<script>
+{
+	const dataX=tf.linspace(-5,5,5);
+	const dataY=tf.softmax(dataX);
+	dataY.print();
+
+	const irisX=[[1.5,0.2],[1.5,0.4],[4.7,1.4],[5,1.7],[5.1,1.9],[4.5,1.7]];
+	const trainDataX=tf.tensor2d(irisX);
+	const irisY=[0,0,1,1,2,2];
+
+	const trainDataY=tf.oneHot(irisY,3);
+	trainDataY.print();
+}
+
+{
+	const irisX=web.iris.getData(irisData,[2,3]);
+	const trainDataX=tf.tensor2d(irisX);
+
+	const irisNames=web.iris.getData(irisData,4);
+	const irisY=irisNames.map((name,index)=>{
+		if(name==="Iris-setosa"){return 0;}
+		return name==="Iris-versicolor"?1:2;
+	},this);
+	console.log(irisY);
+
+	const trainDataY=tf.oneHot(irisY,3);
+	const trainFloatY=tf.cast(trainDataY,'float32');
+
+	const varWeight=tf.variable(tf.randomNormal([2,3],0,1,'float32'),true,'weight_');
+	const varBias=tf.variable(tf.randomNormal([3],0,1,'float32'),true,'bias_');
+
+	const learningRate=0.3, beta1=0.9, beta2=0.99, epsilon=0;
+	const optimizer=tf.train.adam(learningRate,beta1,beta2,epsilon);
+
+	const loop=1000;
+
+	function loss(){
+		const logits=trainDataX.matMul(varWeight).add(varBias);
+		return tf.losses.softmaxCrossEntropy(trainFloatY,logits);
+	}
+
+	function train(){
+		for(let k=0;k<loop;k++){
+			optimizer.minimize(()=>{return loss()});
+		}
+	}
+	train();
+
+	const result=[];
+	irisX.map((value,index)=>{
+		result.push([index,value[0],value[1]]);
+	});
+	irisY.forEach((value,index)=>{
+		result[index][3]=value;
+	});
+
+	const predict=trainDataX.matMul(varWeight).add(varBias).softmax();
+
+	const notSame=[];
+	//unstack은 랭크를 하나 줄인데요.
+	tf.unstack(predict).forEach((tensor,index)=>{
+		const maxIndex=tf.argMax(tensor).dataSync();
+		if(result[index][3]!=maxIndex){
+			result[index][4]=maxIndex;
+			const value=Array.from(tensor.dataSync());
+			const vl=web.getDecimalData(value,{decimal:7});//10진수 소수점 7자리
+			result[index][5]=vl[0], result[index][6]=vl[1], result[index][7]=vl[2];
+			notSame.push(result[index]);
+		}
+	});
+	console.log(notSame);
+}
+</script>
